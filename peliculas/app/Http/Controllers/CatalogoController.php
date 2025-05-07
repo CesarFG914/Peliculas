@@ -42,31 +42,26 @@ class CatalogoController extends Controller
     }
 
     // Vista del formulario de edición
-    public function editar($id) {
-        $pelicula = Pelicula::findOrFail($id);
+    public function editar(Request $request) {
+        $pelicula = Pelicula::where("id",$request->id)->first();
         return view('editar', ['titulo' => 'Editar Película', 'pelicula' => $pelicula]);
     }
 
     // Actualizar los datos de la película
-    public function actualizar(Request $request, $id) {
-        $request->validate([
-            'titulo' => 'required',
-            'descripcion' => 'required',
-            'genero' => 'required',
-            'director' => 'required',
-            'fecha_de_estreno' => 'required|date',
-        ]);
-
-        $pelicula = Pelicula::findOrFail($id);
-        $pelicula->update($request->all());
-
-        return redirect()->route('listado')->with('success', 'Película actualizada correctamente.');
+    public function actualizar(Request $request, Pelicula $pelicula){
+            $pelicula->titulo = $request->titulo;
+            $pelicula->descripcion = $request->descripcion;
+            $pelicula->genero = $request->genero;
+            $pelicula->director = $request->director;
+            $pelicula->fecha_de_estreno = $request->fecha_de_estreno;
+            $pelicula->save();
+            return redirect()->route('listado');
+        
     }
-    public function destroy($id)
-    {
-        $pelicula = Pelicula::findOrFail($id);
+    public function destroy(Request $request){
+      
+        $pelicula = Pelicula::where("id",$request->id)->first();
         $pelicula->delete();
-    
         return redirect()->route('listado')->with('success', 'Película eliminada correctamente');
     }
     
